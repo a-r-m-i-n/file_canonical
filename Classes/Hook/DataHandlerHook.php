@@ -1,4 +1,7 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types = 1);
+
 namespace T3\FileCanonical\Hook;
 
 /*  | This extension is made with ❤ for TYPO3 CMS and is licensed
@@ -18,6 +21,9 @@ use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 class DataHandlerHook
 {
+    /**
+     * @param string|int $id
+     */
     public function processDatamap_afterDatabaseOperations(
         string $status,
         string $table,
@@ -25,7 +31,7 @@ class DataHandlerHook
         array $fieldArray,
         DataHandler $pObj
     ): void {
-        if ($table === 'sys_file_metadata' && in_array($status, ['new', 'update'])) {
+        if ('sys_file_metadata' === $table && in_array($status, ['new', 'update'])) {
             $uid = $this->getUid($id, $table, $status, $pObj);
 
             if (array_key_exists('canonical_link', $fieldArray)) {
@@ -39,7 +45,7 @@ class DataHandlerHook
                 }
 
                 $pageUid = 0;
-                if (isset($params['type'], $params['pageuid']) && $params['type'] === 'page') {
+                if (isset($params['type'], $params['pageuid']) && 'page' === $params['type']) {
                     $pageUid = (int)$params['pageuid'];
                 }
 
@@ -63,6 +69,7 @@ class DataHandlerHook
                     } else {
                         $this->addFlashMessage($url, 'Canonical Link has been parsed and updated.'); // TODO: Translate
                     }
+
                     return;
                 }
                 $this->addFlashMessage(sprintf('Unable to parse and update canonical Link "%s". Following source given: %s', $url, $row['canonical_link']), 'Error', AbstractMessage::ERROR); // TODO: Translate
@@ -70,6 +77,9 @@ class DataHandlerHook
         }
     }
 
+    /**
+     * @param string|int $id
+     */
     private function getUid($id, string $table, string $status, DataHandler $pObj): int
     {
         $uid = $id;
@@ -92,8 +102,8 @@ class DataHandlerHook
     /**
      * @param string $messageBody
      * @param string $messageTitle
-     * @param int $severity
-     * @param bool $storeInSession
+     * @param int    $severity
+     * @param bool   $storeInSession
      */
     private function addFlashMessage($messageBody, $messageTitle = '', $severity = AbstractMessage::OK, $storeInSession = true): void
     {

@@ -1,4 +1,7 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types = 1);
+
 namespace T3\FileCanonical\Middleware;
 
 /*  | This extension is made with ❤ for TYPO3 CMS and is licensed
@@ -33,7 +36,7 @@ class FileCanonicalMiddleware implements MiddlewareInterface
                 $storagePublicUrl = $defaultStorage->getRootLevelFolder()->getPublicUrl();
                 $currentFileIdentifier = substr($uri, strlen($storagePublicUrl));
                 try {
-                $file = $defaultStorage->getFile($currentFileIdentifier);
+                    $file = $defaultStorage->getFile($currentFileIdentifier);
                 } catch (\InvalidArgumentException $e) {
                     return $handler->handle($request); // Early return
                 }
@@ -55,6 +58,7 @@ class FileCanonicalMiddleware implements MiddlewareInterface
                         // TODO: Add canonical link by HTTP referrer, if enabled and if host matches
                         return $response->withHeader('Link', '<' . $canonicalLink . '>; rel="canonical"');
                     }
+
                     return $response;
                 }
             }

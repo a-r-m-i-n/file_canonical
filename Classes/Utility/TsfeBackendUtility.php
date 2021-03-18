@@ -1,4 +1,7 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types = 1);
+
 namespace T3\FileCanonical\Utility;
 
 /*  | This extension is made with ❤ for TYPO3 CMS and is licensed
@@ -23,7 +26,7 @@ class TsfeBackendUtility implements SingletonInterface
 
     public static function initializeTypoScriptFrontendController(int $pageId, int $pageType = 0, int $sysLanguageUid = 0): void
     {
-        if (self::$pageId !== null) {
+        if (null !== self::$pageId) {
             if ($pageId !== self::$pageId) {
                 throw new \RuntimeException('TSFE was already initialized with different root page ID', 1613146956);
             }
@@ -61,7 +64,6 @@ class TsfeBackendUtility implements SingletonInterface
         }
         $template->runThroughTemplates($rootline, 0);
         $template->generateConfig();
-
 
         $tsfe->fe_user = GeneralUtility::makeInstance(FrontendUserAuthentication::class);
         $tsfe->fe_user->start();
