@@ -21,6 +21,9 @@
         "php": ">=7.4",
         "typo3/cms-core": "^10.4 || ^11.0"
     },
+    "require-dev": {
+        "typo3/minimal": "^10.4"
+    },
     "autoload": {
         "psr-4": {
             "T3\\FileCanonical\\": "Classes"
@@ -29,9 +32,19 @@
     "replace": {
         "typo3-ter/file_canonical": "*"
     },
+    "config": {
+        "platform": {
+            "php": "7.4",
+            "ext-xml": "7.4"
+        },
+        "vendor-dir": ".build/vendor"
+    },
     "extra": {
         "typo3/cms": {
-            "extension-key": "file_canonical"
+            "extension-key": "file_canonical",
+            "cms-package-dir": "{$vendor-dir}/typo3/cms",
+            "web-dir": ".build/public",
+            "app-dir": ".build"
         }
     }
 }
