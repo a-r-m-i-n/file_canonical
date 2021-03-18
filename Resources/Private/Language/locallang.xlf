@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" product-name="file_canonical">
+		<header/>
+		<body>
+            <trans-unit id="canonical_link"><source>Canonical Link</source></trans-unit>
+            <trans-unit id="canonical_link.description"><source>Make sure given resource links to this file.</source></trans-unit>
+            <trans-unit id="canonical_link_parsed"><source>Canonical Link (parsed)</source></trans-unit>
+            <trans-unit id="canonical_link_parsed.description"><source>This is the actual canonical URL to be used. It updates automatically, on save.</source></trans-unit>
+		</body>
+	</file>
+</xliff>
