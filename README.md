@@ -67,7 +67,6 @@ The extension creates the canonical link automatically from HTTP referer, if ena
 
 ## Roadmap
 
-- Add Logging
 - Add info module, which lists files with canonical link
   - There you should also be able, to remove the parsed canonical link
 - Add translations for locallang

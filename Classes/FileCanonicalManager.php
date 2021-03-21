@@ -10,6 +10,8 @@ namespace T3\FileCanonical;
  *  | (c) 2021 Armin Vieweg <info@v.ieweg.de>
  */
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Mime\MimeTypes;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration as ExtensionConfigurationService;
 use TYPO3\CMS\Core\Database\ConnectionPool;
@@ -20,9 +22,11 @@ use TYPO3\CMS\Core\Resource\FileInterface;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\StringUtility;
 
-final class FileCanonicalManager implements SingletonInterface
+final class FileCanonicalManager implements SingletonInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
     private static ?ExtensionConfiguration $config = null;
 
     /**
@@ -40,8 +44,10 @@ final class FileCanonicalManager implements SingletonInterface
         $storagePublicUrl = $storage->getRootLevelFolder()->getPublicUrl();
         $currentFileIdentifier = substr($uri, strlen($storagePublicUrl));
         try {
-            /* @var FileInterface|File $file */
-            return $storage->getFile($currentFileIdentifier);
+            if ($storage->hasFile($currentFileIdentifier)) {
+                /* @var FileInterface|File $file */
+                return $storage->getFile($currentFileIdentifier);
+            }
         } catch (\InvalidArgumentException $e) {
         }
 
@@ -78,19 +84,43 @@ final class FileCanonicalManager implements SingletonInterface
         return self::$config = GeneralUtility::makeInstance(ExtensionConfiguration::class, $config ?? []);
     }
 
-    public function checkCanonicalUrlFromRefererAndUpdateMetadata(File $file, ServerRequestInterface $request): void
+    /**
+     * @param File $file
+     * @param ServerRequestInterface $request
+     * @return string|null The checked (and sanitized) canonical URL
+     */
+    public function checkCanonicalUrlFromRefererAndUpdateMetadata(File $file, ServerRequestInterface $request): ?string
     {
         $refererHeader = $request->getHeader('referer');
         $refererUrl = reset($refererHeader);
         $refererUrlParts = parse_url($refererUrl);
         // Check that referer host name and current host name is the same
-        if ($refererUrlParts['host'] === $request->getUri()->getHost()) {
+        // And hat REQUEST_URI does not start with /typo3/
+        if ($refererUrlParts['host'] === $request->getUri()->getHost() &&
+            !StringUtility::beginsWith($refererUrlParts['path'], '/typo3/')
+        ) {
             $canonicalLink = $refererUrl;
             if (!$this->getConfig()->isRespectRefererQueryStringEnabled()) {
                 $canonicalLink = $refererUrlParts['scheme'] . '://' . $refererUrlParts['host'] . $refererUrlParts['path'];
             }
             $this->updateCanonicalLinkParsedInDatabase($canonicalLink, $file->getMetaData()->get()['uid']);
+            $this->logger->info(
+                sprintf(
+                    'Set empty canonical_link_parsed from HTTP referer to "%s" for sys_file_metadata with uid %d.',
+                    $canonicalLink,
+                    $file->getMetaData()->get()['uid']
+                )
+            );
+            return $canonicalLink;
+        } else {
+            $this->logger->debug(
+                sprintf(
+                    'Did not added canonical_link_parsed from HTTP referer because given host (%s) did not match current host or referer points to TYPO3 backend.',
+                    $refererUrlParts['host']
+                )
+            );
         }
+        return null;
     }
 
     public function updateCanonicalLinkParsedInDatabase(string $canonicalLinkParsed, int $sysFileMetadataUid): int
@@ -99,9 +129,21 @@ final class FileCanonicalManager implements SingletonInterface
         $pool = GeneralUtility::makeInstance(ConnectionPool::class);
         $connection = $pool->getConnectionForTable('sys_file_metadata');
 
-        return $connection->update('sys_file_metadata', [
+        $int = $connection->update('sys_file_metadata', [
             'canonical_link_parsed' => $canonicalLinkParsed,
-            'tstamp' => time(),
+            'tstamp' => $timestamp = time(),
         ], ['uid' => $sysFileMetadataUid]);
+
+        $this->logger->debug(
+            sprintf(
+                '%s sys_file_metadata:%d - tstamp: %d, canonical_link_parsed: %s',
+                $int ? 'Successfully updated' : 'Error while updating',
+                $sysFileMetadataUid,
+                $timestamp,
+                $canonicalLinkParsed
+            )
+        );
+
+        return $int;
     }
 }

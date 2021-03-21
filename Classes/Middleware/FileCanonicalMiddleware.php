@@ -43,7 +43,7 @@ class FileCanonicalMiddleware implements MiddlewareInterface
             $request->hasHeader('referer') &&
             $manager->getConfig()->isAutoCreateFileCanonicalFromRefererEnabled()
         ) {
-            $manager->checkCanonicalUrlFromRefererAndUpdateMetadata($file, $request);
+            $canonicalLink = $manager->checkCanonicalUrlFromRefererAndUpdateMetadata($file, $request);
         }
 
         if (!empty($canonicalLink)) {
