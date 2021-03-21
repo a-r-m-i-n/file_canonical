@@ -9,6 +9,7 @@ namespace T3\FileCanonical\Hook;
  *  |
  *  | (c) 2021 Armin Vieweg <info@v.ieweg.de>
  */
+use T3\FileCanonical\FileCanonicalManager;
 use T3\FileCanonical\Utility\TsfeBackendUtility;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
@@ -59,10 +60,9 @@ class DataHandlerHook
                     'linkAccessRestrictedPages' => true,
                 ]);
 
-                /** @var \TYPO3\CMS\Core\Database\ConnectionPool $pool */
-                $pool = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Database\ConnectionPool::class);
-                $connection = $pool->getConnectionForTable('sys_file_metadata');
-                $ret = $connection->update('sys_file_metadata', ['canonical_link_parsed' => $url, 'tstamp' => time()], ['uid' => $uid]);
+                /** @var FileCanonicalManager $manager */
+                $manager = GeneralUtility::makeInstance(FileCanonicalManager::class);
+                $ret = $manager->updateCanonicalLinkParsedInDatabase($url, $uid);
                 if ($ret) {
                     if (empty($url)) {
                         $this->addFlashMessage('', 'Canonical Link has been reset'); // TODO: Translate

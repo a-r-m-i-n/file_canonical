@@ -44,6 +44,11 @@ Now, all requests which point to ``/fileadmin`` and request a PDF or common offi
 by the ``FileCanonicalMiddleware`` provided by this extension.
 
 
+### Extension settings
+
+![Extension settings of EXT:file_canonical](Documentation/Images/ExtensionConfiguration.png)
+
+
 ## Usage
 
 To enable canonical link for a file:
@@ -52,14 +57,19 @@ To enable canonical link for a file:
 2. Set a page or record, on which this file is located at
 3. After saving metadata, the canonical link get parsed and stored to database
 
-Now, when requesting the file in frontend, will add additional "Link" HTTP header (see screenshot 2).
+Now, when requesting the file in Frontend, will add additional "Link" HTTP header (see screenshot 2).
+
+
+### Auto Canonical Link
+
+The extension creates the canonical link automatically from HTTP referer, if enabled. (see Extension settings)
 
 
 ## Roadmap
 
-- Add canonical_link_parsed automagically by HTTP referrer
-    - Make this optional
-    - Match referrer host, with current host
+- Add Logging
+- Add info module, which lists files with canonical link
+  - There you should also be able, to remove the parsed canonical link
 - Add translations for locallang
 - Provide RST documentation
 - Publish in TER and on Packagist

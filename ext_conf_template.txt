@@ -1,0 +1,8 @@
+# cat=Basic; type=int+; label=File storage UID: The uid of file storage to use.
+fileStorageUid = 0
+
+# cat=Basic; type=boolean; label=Automatically create file canonical from referer: Adds canonical link for file automatically from HTTP referer, if "canonical_link_parsed" is empty.
+autoCreateFileCanonicalFromReferer =
+
+# cat=Basic; type=boolean; label=Respect HTTP referer's query string: If enabled, also the query string is used for canonical link. It is recommended, to keep this option disabled and provide proper routing configuration instead.
+respectRefererQueryString =
