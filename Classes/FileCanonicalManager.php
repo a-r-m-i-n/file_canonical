@@ -67,9 +67,13 @@ final class FileCanonicalManager implements SingletonInterface
         if (self::$config) {
             return self::$config;
         }
-        /** @var ExtensionConfigurationService $extensionConfigService */
-        $extensionConfigService = GeneralUtility::makeInstance(ExtensionConfigurationService::class);
-        $config = $extensionConfigService->get('file_canonical');
+
+        try {
+            /** @var ExtensionConfigurationService $extensionConfigService */
+            $extensionConfigService = GeneralUtility::makeInstance(ExtensionConfigurationService::class);
+            $config = $extensionConfigService->get('file_canonical');
+        } catch (\Exception $e) {
+        }
 
         return self::$config = GeneralUtility::makeInstance(ExtensionConfiguration::class, $config ?? []);
     }

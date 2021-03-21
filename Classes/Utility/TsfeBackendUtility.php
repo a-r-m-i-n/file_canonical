@@ -22,7 +22,7 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 class TsfeBackendUtility implements SingletonInterface
 {
     /** @var int|null */
-    private static $pageId = null;
+    private static $pageId;
 
     public static function initializeTypoScriptFrontendController(int $pageId, int $pageType = 0, int $sysLanguageUid = 0): void
     {
@@ -62,7 +62,7 @@ class TsfeBackendUtility implements SingletonInterface
                 $rootline = [];
             }
         }
-        $template->runThroughTemplates($rootline, 0);
+        $template->runThroughTemplates($rootline);
         $template->generateConfig();
 
         $tsfe->fe_user = GeneralUtility::makeInstance(FrontendUserAuthentication::class);

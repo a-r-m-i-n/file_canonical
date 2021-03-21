@@ -99,14 +99,12 @@ class DataHandlerHook
         return (int)$uid;
     }
 
-    /**
-     * @param string $messageBody
-     * @param string $messageTitle
-     * @param int    $severity
-     * @param bool   $storeInSession
-     */
-    private function addFlashMessage($messageBody, $messageTitle = '', $severity = AbstractMessage::OK, $storeInSession = true): void
-    {
+    private function addFlashMessage(
+        string $messageBody,
+        string $messageTitle = '',
+        int $severity = AbstractMessage::OK,
+        bool $storeInSession = true
+    ): void {
         $message = GeneralUtility::makeInstance(
             FlashMessage::class,
             $messageBody,
