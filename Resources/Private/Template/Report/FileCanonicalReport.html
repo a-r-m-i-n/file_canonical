@@ -1,0 +1,50 @@
+<div class="container-fluid">
+    <f:flashMessages />
+
+    <!-- TODO Translate -->
+    <h1>File Canonical Overview
+        <f:link.page title="Reload"><core:icon identifier="actions-refresh" /></f:link.page>
+    </h1>
+
+    <f:if condition="{filesMetadataWithCanonicalLink -> f:count()} > 0">
+        <f:then>
+            <p>Found {filesMetadataWithCanonicalLink -> f:count()} files with canonical link set.</p>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>UID</th>
+                    <th>File</th>
+                    <th>Link manually set?</th>
+                    <th>Canonical Link (parsed)</th>
+                    <th>Last updated</th>
+                    <th>&nbsp;</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <f:for each="{filesMetadataWithCanonicalLink}" as="meta">
+                        <tr>
+                            <td>{meta.uid}</td>
+                            <td>{meta.file.identifier}</td>
+                            <td><f:if condition="{meta.canonical_link}"><f:then>Yes</f:then><f:else>No</f:else></f:if></td>
+                            <td><code>{meta.canonical_link_parsed}</code></td>
+                            <td><f:format.date format="d.m.Y H:i:s">{meta.tstamp}</f:format.date></td>
+                            <td class="text-right">
+                                <f:if condition="!{meta.canonical_link}">
+                                    <f:then>
+                                        <f:link.action class="btn btn-danger" additionalParams="{clearFileCanonical:meta.uid}">Remove canonical link</f:link.action>
+                                    </f:then>
+                                    <f:else>
+                                        <a href="{meta.module_link}" class="btn btn-primary">Edit meta data</a>
+                                    </f:else>
+                                </f:if>
+                            </td>
+                        </tr>
+                    </f:for>
+                </tbody>
+            </table>
+        </f:then>
+        <f:else>
+            <em>No files with canonical link set found!</em>
+        </f:else>
+    </f:if>
+</div>

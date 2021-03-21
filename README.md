@@ -5,11 +5,18 @@ This is an extension for TYPO3 CMS. It provides canonical links for files.
 ## Screenshots
 
 ![Extended sys_file_metadata TCA](Documentation/Images/ExtendedFileMetadata.png)
+
 Screenshot 1: *Extended sys_file_metadata TCA*
 
 
 ![Additional HTTP response header "link"](Documentation/Images/AdditionalHttpResponseHeaderLink.png)
+
 Screenshot 2: *Additional HTTP response header "link"*
+
+
+![Info module overview](Documentation/Images/InfoModule.png)
+
+Screenshot 3: *Info module overview*
 
 
 ## Installation
@@ -67,8 +74,6 @@ The extension creates the canonical link automatically from HTTP referer, if ena
 
 ## Roadmap
 
-- Add info module, which lists files with canonical link
-  - There you should also be able, to remove the parsed canonical link
 - Add translations for locallang
 - Provide RST documentation
 - Publish in TER and on Packagist

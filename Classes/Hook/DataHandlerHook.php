@@ -10,13 +10,12 @@ namespace T3\FileCanonical\Hook;
  *  | (c) 2021 Armin Vieweg <info@v.ieweg.de>
  */
 use T3\FileCanonical\FileCanonicalManager;
+use T3\FileCanonical\Utility\FlashMessageUtility;
 use T3\FileCanonical\Utility\TsfeBackendUtility;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\LinkHandling\LinkService;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
-use TYPO3\CMS\Core\Messaging\FlashMessage;
-use TYPO3\CMS\Core\Messaging\FlashMessageService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
@@ -65,14 +64,14 @@ class DataHandlerHook
                 $ret = $manager->updateCanonicalLinkParsedInDatabase($url, $uid);
                 if ($ret) {
                     if (empty($url)) {
-                        $this->addFlashMessage('', 'Canonical Link has been reset'); // TODO: Translate
+                        FlashMessageUtility::addFlashMessage('', 'Canonical Link has been reset'); // TODO: Translate
                     } else {
-                        $this->addFlashMessage($url, 'Canonical Link has been parsed and updated.'); // TODO: Translate
+                        FlashMessageUtility::addFlashMessage($url, 'Canonical Link has been parsed and updated.'); // TODO: Translate
                     }
 
                     return;
                 }
-                $this->addFlashMessage(sprintf('Unable to parse and update canonical Link "%s". Following source given: %s', $url, $row['canonical_link']), 'Error', AbstractMessage::ERROR); // TODO: Translate
+                FlashMessageUtility::addFlashMessage(sprintf('Unable to parse and update canonical Link "%s". Following source given: %s', $url, $row['canonical_link']), 'Error', AbstractMessage::ERROR); // TODO: Translate
             }
         }
     }
@@ -97,24 +96,5 @@ class DataHandlerHook
         }
 
         return (int)$uid;
-    }
-
-    private function addFlashMessage(
-        string $messageBody,
-        string $messageTitle = '',
-        int $severity = AbstractMessage::OK,
-        bool $storeInSession = true
-    ): void {
-        $message = GeneralUtility::makeInstance(
-            FlashMessage::class,
-            $messageBody,
-            $messageTitle,
-            $severity,
-            $storeInSession
-        );
-
-        $flashMessageService = GeneralUtility::makeInstance(FlashMessageService::class);
-        $defaultFlashMessageQueue = $flashMessageService->getMessageQueueByIdentifier();
-        $defaultFlashMessageQueue->enqueue($message);
     }
 }

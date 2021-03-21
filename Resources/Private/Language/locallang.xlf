@@ -3,6 +3,9 @@
 	<file source-language="en" datatype="plaintext" original="messages" product-name="file_canonical">
 		<header/>
 		<body>
+            <trans-unit id="file_canonical"><source>File Canonical</source></trans-unit>
+            <trans-unit id="file_canonical.overview"><source>File Canonical Overview</source></trans-unit>
+
             <trans-unit id="canonical_link"><source>Canonical Link</source></trans-unit>
             <trans-unit id="canonical_link.description"><source>Make sure given resource links to this file.</source></trans-unit>
             <trans-unit id="canonical_link_parsed"><source>Canonical Link (parsed)</source></trans-unit>
