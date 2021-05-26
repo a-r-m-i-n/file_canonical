@@ -22,14 +22,14 @@ class FileCanonicalMiddleware implements MiddlewareInterface
 {
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $requestedFile = Environment::getPublicPath() . $request->getUri()->getPath();
+        $uri = urldecode($request->getUri()->getPath());
+        $requestedFile = Environment::getPublicPath() . $uri;
         if (!file_exists($requestedFile) || !is_file($requestedFile)) {
             return $handler->handle($request); // Early return
         }
 
         /** @var FileCanonicalManager $manager */
         $manager = GeneralUtility::makeInstance(FileCanonicalManager::class);
-        $uri = $request->getUri()->getPath();
         $file = $manager->getFileFromUri($uri);
 
         if (!$file || !$file instanceof File || !$file->hasProperty('canonical_link_parsed')) {
