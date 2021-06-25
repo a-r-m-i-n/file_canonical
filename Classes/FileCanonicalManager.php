@@ -175,7 +175,7 @@ final class FileCanonicalManager implements SingletonInterface, LoggerAwareInter
             ->where('canonical_link_parsed != ""')
             ->orderBy('tstamp', 'DESC')
             ->execute();
-        $result = $result->fetchAllAssociative();
+        $result = $result->fetchAll(\PDO::FETCH_ASSOC);
 
         foreach ($result as $index => $row) {
             /** @var File $file */
