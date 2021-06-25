@@ -3,11 +3,12 @@
 if (PHP_SAPI !== 'cli') {
     die('CLI usage only');
 }
-$finder = PhpCsFixer\Finder::create()
+
+$finder = (new \PhpCsFixer\Finder())
     ->in(__DIR__ . '/../../../Classes/')
 ;
 
-return PhpCsFixer\Config::create()
+return (new \PhpCsFixer\Config())
     ->setRiskyAllowed(true)
     ->setRules([
         '@PSR2' => true,

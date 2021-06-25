@@ -1,6 +1,6 @@
 includes:
-  - ../../../.Build/vendor/jangregor/phpstan-prophecy/extension.neon
-  - ../../../.Build/vendor/saschaegerer/phpstan-typo3/extension.neon
+  - ../../../.build/vendor/jangregor/phpstan-prophecy/extension.neon
+  - ../../../.build/vendor/saschaegerer/phpstan-typo3/extension.neon
 
 parameters:
     level: 6
