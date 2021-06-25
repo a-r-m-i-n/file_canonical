@@ -27,7 +27,7 @@
         "phpstan/phpstan": "^0.12.80",
         "jangregor/phpstan-prophecy": "^0.8",
         "saschaegerer/phpstan-typo3": "^0.13",
-        "armin/editorconfig-cli": "^1.1"
+        "armin/editorconfig-cli": "^1.5"
     },
     "autoload": {
         "psr-4": {
