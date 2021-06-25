@@ -1,6 +1,6 @@
 # EXT:file_canonical
 
-The File Canonical extension for TYPO3 provides canonical links (via HTTP headers) for files (e.g. in fileadmin/).
+The File Canonical extension for TYPO3 CMS provides canonical links (via HTTP headers) for files (e.g. in fileadmin/).
 This allows you to define a page, related to the requested file, which might be imported for SEO.
 
 Read more about: [Canonical tags in HTTP headers](https://developers.google.com/search/docs/advanced/crawling/consolidate-duplicate-urls#rel-canonical-header-method)
