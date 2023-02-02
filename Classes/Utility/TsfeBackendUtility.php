@@ -9,13 +9,15 @@ namespace T3\FileCanonical\Utility;
  *  |
  *  | (c) 2021 Armin Vieweg <info@v.ieweg.de>
  */
+
+use TYPO3\CMS\Core\Context\Context;
+use TYPO3\CMS\Core\Routing\PageArguments;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\TypoScript\TemplateService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\RootlineUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
@@ -24,7 +26,7 @@ class TsfeBackendUtility implements SingletonInterface
     /** @var int|null */
     private static $pageId;
 
-    public static function initializeTypoScriptFrontendController(int $pageId, int $pageType = 0, int $sysLanguageUid = 0): void
+    public static function initializeTypoScriptFrontendController(int $pageId, string $pageType = '0', int $sysLanguageUid = 0): void
     {
         if (null !== self::$pageId) {
             if ($pageId !== self::$pageId) {
@@ -37,17 +39,26 @@ class TsfeBackendUtility implements SingletonInterface
         /** @var SiteFinder $siteFinder */
         $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
         $site = $pageId ? $siteFinder->getSiteByPageId($pageId) : array_values($siteFinder->getAllSites())[0];
+        $feAuthentication = GeneralUtility::makeInstance(FrontendUserAuthentication::class);
 
         $_SERVER['HTTP_HOST'] = $site->getBase()->getHost();
         $_SERVER['REQUEST_URI'] = '/';
         $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
 
         /** @var TypoScriptFrontendController $tsfe */
-        $tsfe = GeneralUtility::makeInstance(TypoScriptFrontendController::class, null, $site, $site->getLanguageById($sysLanguageUid));
+        $tsfe = GeneralUtility::makeInstance(
+            TypoScriptFrontendController::class,
+            GeneralUtility::makeInstance(Context::class),
+            $site,
+            $site->getLanguageById($sysLanguageUid),
+            new PageArguments($pageId, $pageType, []),
+            $feAuthentication
+        );
+
         $tsfe->newCObj();
         $GLOBALS['TSFE'] = $tsfe;
 
-        $extbaseConfigurationManager = GeneralUtility::makeInstance(ObjectManager::class)->get(ConfigurationManagerInterface::class);
+        $extbaseConfigurationManager = GeneralUtility::makeInstance(ConfigurationManagerInterface::class);
         $extbaseConfigurationManager->setContentObject($tsfe->cObj);
 
         /** @var TemplateService $template */
@@ -65,12 +76,12 @@ class TsfeBackendUtility implements SingletonInterface
         $template->runThroughTemplates($rootline);
         $template->generateConfig();
 
-        $tsfe->fe_user = GeneralUtility::makeInstance(FrontendUserAuthentication::class);
+        $tsfe->fe_user = $feAuthentication;
         $tsfe->fe_user->start();
         $tsfe->fe_user->unpack_uc();
 
         $tsfe->tmpl = $template;
-        $tsfe->fetch_the_id();
+        $tsfe->determineId();
 
         self::$pageId = $pageId;
     }
